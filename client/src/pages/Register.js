@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 import { useNavigate, Link } from 'react-router-dom';
+import API_URL from '../config'; // Import the config
 
 export default function Register() {
     const [formData, setFormData] = useState({
@@ -15,20 +16,17 @@ export default function Register() {
     const handleSubmit = async (e) => {
         e.preventDefault();
 
-        // 1. Validate Passwords Match
         if (formData.password !== formData.confirmPassword) {
             alert("Passwords do not match!");
             return;
         }
 
         try {
-            // 2. Prepare payload (exclude confirmPassword)
             const { confirmPassword, ...registerData } = formData;
 
-            // 3. Send registration data to backend
-            await axios.post('http://localhost:5000/api/auth/register', registerData);
+            // Using API_URL
+            await axios.post(`${API_URL}/auth/register`, registerData);
 
-            // 4. Success feedback and Redirect to Login
             alert('Registration successful! Please log in with your new account.');
             navigate('/login');
 
@@ -48,7 +46,6 @@ export default function Register() {
                 </div>
 
                 <div className="space-y-4">
-                    {/* Username */}
                     <div>
                         <label className="block text-sm font-medium text-slate-700 mb-1">Username</label>
                         <input
@@ -61,7 +58,6 @@ export default function Register() {
                         />
                     </div>
 
-                    {/* Email */}
                     <div>
                         <label className="block text-sm font-medium text-slate-700 mb-1">Email Address</label>
                         <input
@@ -74,7 +70,6 @@ export default function Register() {
                         />
                     </div>
 
-                    {/* Password */}
                     <div>
                         <label className="block text-sm font-medium text-slate-700 mb-1">Password</label>
                         <input
@@ -88,7 +83,6 @@ export default function Register() {
                         />
                     </div>
 
-                    {/* Confirm Password */}
                     <div>
                         <label className="block text-sm font-medium text-slate-700 mb-1">Confirm Password</label>
                         <input

@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 import { useNavigate, Link } from 'react-router-dom';
+import API_URL from '../config'; // Import the config
 
 export default function Login() {
     const [formData, setFormData] = useState({ email: '', password: '' });
@@ -9,12 +10,10 @@ export default function Login() {
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
-            const res = await axios.post('http://localhost:5000/api/auth/login', formData);
+            // Using API_URL for dynamic connection
+            const res = await axios.post(`${API_URL}/auth/login`, formData);
 
-            // 1. Save Token
             localStorage.setItem('token', res.data.token);
-
-            // 2. Save User Info immediately (Fixes the "Welcome User" issue)
             localStorage.setItem('nutrismart_user', JSON.stringify(res.data.user));
 
             navigate('/app');
