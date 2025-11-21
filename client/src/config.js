@@ -9,7 +9,6 @@ const getIsLocalHost = () => {
     return hostname === "localhost" || hostname === "127.0.0.1";
 };
 
-const API_URL = process.env.REACT_APP_API_URL ||
+const API_URL =
+    process.env.REACT_APP_API_URL ||
     (getIsLocalHost() ? DEFAULT_LOCAL_URL : DEFAULT_PROD_URL);
-
-export default API_URL;
