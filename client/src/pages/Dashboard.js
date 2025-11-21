@@ -329,7 +329,7 @@ export default function Dashboard() {
 
     const fetchTrending = async () => {
         try {
-            const res = await axios.get(`${API_URL}`);
+        const res = await axios.get(`${API_URL}/recipes/trending`);
             if (res.data.success) setTrendingRecipes(res.data.data);
         } catch (err) { console.log("Trending fetch error"); }
     };
@@ -346,7 +346,7 @@ export default function Dashboard() {
             setUser(updatedData);
             localStorage.setItem('nutrismart_user', JSON.stringify(updatedData));
 
-            const res = await axios.post(`${API_URL}`, updatedData);
+            const res = await axios.post(`${API_URL}/user/profile`, updatedData);
             if (res.data.success) {
                 if(showToast) alert("Saved!");
             }
@@ -371,7 +371,7 @@ export default function Dashboard() {
         if (!pantryInput.trim()) return;
         setIsGenerating(true);
         try {
-            const res = await axios.post(`${API_URL}`, {
+            const res = await axios.post(`${API_URL}/recommend`, {
                 pantry: pantryInput,
                 userGoal: user.goals || 'balanced',
                 budget: user.budgetLevel || 'medium'
