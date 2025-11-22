@@ -42,7 +42,7 @@ const OverviewTab = ({ user, trendingRecipes }) => (
                     <p className="text-slate-500">Start generating recipes to see them appear here!</p>
                 </div>
             ) : (
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 lg-grid-cols-4 gap-6">
                     {trendingRecipes.map((item, idx) => (
                         <div key={idx} className="bg-white rounded-2xl border border-slate-100 shadow-sm hover:shadow-xl transition-all overflow-hidden group cursor-pointer transform hover:-translate-y-1">
                             <div className="h-40 overflow-hidden relative bg-slate-100">
@@ -69,6 +69,7 @@ const OverviewTab = ({ user, trendingRecipes }) => (
         </div>
     </div>
 );
+
 const AIChefTab = ({ pantryInput, setPantryInput, handleGenerateRecipes, isGenerating, aiRecipes }) => (
     <div className="max-w-5xl mx-auto h-full flex flex-col animate-fadeIn">
         {/* Chat Header */}
@@ -82,8 +83,6 @@ const AIChefTab = ({ pantryInput, setPantryInput, handleGenerateRecipes, isGener
 
         {/* Chat Interface */}
         <div className="flex-1 bg-white rounded-3xl shadow-xl border border-slate-100 overflow-hidden flex flex-col">
-
-            {/* Results Area (Scrollable) */}
             <div className="flex-1 p-8 overflow-y-auto bg-slate-50/50 custom-scrollbar">
                 {aiRecipes.length === 0 ? (
                     <div className="h-full flex flex-col items-center justify-center text-slate-400 space-y-4">
@@ -112,7 +111,6 @@ const AIChefTab = ({ pantryInput, setPantryInput, handleGenerateRecipes, isGener
                 )}
             </div>
 
-            {/* Input Area (Fixed at bottom) */}
             <div className="p-6 bg-white border-t border-slate-100">
                 <div className="relative flex items-center gap-2">
                     <div className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400">
@@ -147,7 +145,7 @@ const PantryTab = ({ pantry, setPantry, handleUpdateProfile, user }) => {
         if (!newItem.trim()) return;
         const updatedPantry = [...(pantry || []), newItem];
         setPantry(updatedPantry);
-        handleUpdateProfile({ ...user, pantry: updatedPantry }, false); // Silent update
+        handleUpdateProfile({ ...user, pantry: updatedPantry }, false);
         setNewItem('');
     };
 
@@ -212,7 +210,6 @@ const ProfileTab = ({ user, handleUpdateProfile, handleImageUpload }) => {
     const [editForm, setEditForm] = useState({ ...user });
     const fileInputRef = useRef(null);
 
-    // Sync form with user data when user prop changes
     useEffect(() => {
         setEditForm({ ...user });
     }, [user]);
@@ -229,10 +226,9 @@ const ProfileTab = ({ user, handleUpdateProfile, handleImageUpload }) => {
                 </button>
             </div>
 
-            {/* Avatar Section */}
             <div className="flex flex-col items-center mb-8 pb-8 border-b border-slate-100">
                 <div className="relative mb-4">
-                    <div className="w-32 h-32 bg-slate-100 rounded-full flex items-center justify-center text-slate-400 border-4 border-white shadow-xl overflow-hidden">
+                    <div className="w-32 h-32	bg-slate-100 rounded-full flex items-center justify-center text-slate-400 border-4 border-white shadow-xl overflow-hidden">
                         {editForm.profileImage ? (
                             <img src={editForm.profileImage} alt="Profile" className="w-full h-full object-cover" />
                         ) : (
@@ -257,7 +253,6 @@ const ProfileTab = ({ user, handleUpdateProfile, handleImageUpload }) => {
                 <p className="text-slate-500">{editForm.email}</p>
             </div>
 
-            {/* Form Fields */}
             <div className="space-y-6">
                 <div>
                     <label className="block text-xs font-bold text-slate-500 uppercase mb-2 tracking-wide">Bio</label>
@@ -309,28 +304,27 @@ export default function Dashboard() {
     const [user, setUser] = useState({ username: 'User', email: '', profileImage: null, pantry: [] });
     const [trendingRecipes, setTrendingRecipes] = useState([]);
 
-    // AI Chef State
     const [pantryInput, setPantryInput] = useState('');
     const [isGenerating, setIsGenerating] = useState(false);
     const [aiRecipes, setAiRecipes] = useState([]);
-    const [searchQuery, setSearchQuery] = useState('');
+    const [searchQuery, setSearchQuery] =	useState('');
     const navigate = useNavigate();
 
     useEffect(() => {
-        // 1. Load User from LocalStorage immediately for speed
         const storedUser = localStorage.getItem('nutrismart_user');
         if (storedUser) {
             setUser(JSON.parse(storedUser));
         }
-        // 2. Then fetch fresh data
         fetchTrending();
     }, []);
 
     const fetchTrending = async () => {
         try {
-            const res = await axios.get(`${API_URL}`);
+            const res = await axios.get(`${API_URL}/recipes/trending`);
             if (res.data.success) setTrendingRecipes(res.data.data);
-        } catch (err) { console.log("Trending fetch error"); }
+        } catch (err) {
+            console.log("Trending fetch error", err);
+        }
     };
 
     const handleLogout = () => {
@@ -341,13 +335,12 @@ export default function Dashboard() {
 
     const handleUpdateProfile = async (updatedData, showToast = true) => {
         try {
-            // Optimistic Update
             setUser(updatedData);
             localStorage.setItem('nutrismart_user', JSON.stringify(updatedData));
 
-            const res = await axios.post(`${API_URL}`, updatedData);
-            if (res.data.success) {
-                if(showToast) alert("Saved!");
+            const res = await axios.post(`${API_URL}/user/profile`, updatedData);
+            if (res.data.success && showToast) {
+                alert("Saved!");
             }
         } catch (err) {
             alert("Failed to save changes");
@@ -370,7 +363,7 @@ export default function Dashboard() {
         if (!pantryInput.trim()) return;
         setIsGenerating(true);
         try {
-            const res = await axios.post(`${API_URL}`, {
+            const res = await axios.post(`${API_URL}/recommend`, {
                 pantry: pantryInput,
                 userGoal: user.goals || 'balanced',
                 budget: user.budgetLevel || 'medium'
@@ -378,7 +371,6 @@ export default function Dashboard() {
             if (res.data.success) setAiRecipes(res.data.data);
         } catch (err) {
             console.error("Full Error:", err);
-            // Update this line to show the actual error from the backend
             alert(err.response?.data?.error || "Chef is busy right now. Check server logs.");
         } finally {
             setIsGenerating(false);
@@ -387,7 +379,6 @@ export default function Dashboard() {
 
     return (
         <div className="flex h-screen bg-slate-50 font-sans text-slate-900">
-            {/* Sidebar */}
             <aside className={`${sidebarOpen ? 'w-72' : 'w-24'} bg-slate-900 text-slate-300 transition-all duration-300 flex flex-col border-r border-slate-800 shadow-2xl z-20`}>
                 <div className="h-24 flex items-center px-8 border-b border-slate-800/50">
                     <div className="flex items-center gap-4 text-white font-bold text-xl tracking-tight">
@@ -428,7 +419,6 @@ export default function Dashboard() {
                 </div>
             </aside>
 
-            {/* Main Content */}
             <div className="flex-1 flex flex-col h-screen overflow-hidden relative">
                 <header className="h-24 bg-white border-b border-slate-200 flex justify-between items-center px-8 z-10">
                     <div className="flex items-center gap-6">
@@ -489,3 +479,4 @@ export default function Dashboard() {
         </div>
     );
 }
+
