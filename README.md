@@ -2,9 +2,9 @@
 
 NutriSmart is a full-stack MERN application that helps users stay on top of their nutrition goals. Users can create an account, manage pantry items, and tap an AI “Chef Gemini” assistant to turn whatever ingredients they have into personalized recipes.
 
-- Frontend (React + Vercel): https://mern-final-project-joan-ouma-j8rx.vercel.app
-- Backend (Express + Render): https://nutrismart-p2iq.onrender.com
-- Repository: https://github.com/joan-ouma/mern-final-project-joan-ouma
+- Frontend (React + Vercel): [https://mern-final-project-joan-ouma.vercel.app]
+- Backend (Express + Render): [https://nutrismart-p2iq.onrender.com]
+- Repository: [https://github.com/joan-ouma/mern-final-project-joan-ouma]
 
 ## Features
 - Authentication – register/login flows with client-side validation.
