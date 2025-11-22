@@ -69,7 +69,6 @@ const OverviewTab = ({ user, trendingRecipes }) => (
         </div>
     </div>
 );
-
 const AIChefTab = ({ pantryInput, setPantryInput, handleGenerateRecipes, isGenerating, aiRecipes }) => (
     <div className="max-w-5xl mx-auto h-full flex flex-col animate-fadeIn">
         {/* Chat Header */}
